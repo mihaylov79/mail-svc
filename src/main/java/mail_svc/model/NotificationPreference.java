@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -29,7 +29,7 @@ public class NotificationPreference {
     private boolean enabled;
 
     @Column
-    private String mail;
+    private String info;
 
     @Column
     private LocalDateTime created;
