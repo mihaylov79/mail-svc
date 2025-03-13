@@ -8,10 +8,9 @@ import mail_svc.web.mapper.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/notifications")
@@ -23,6 +22,16 @@ public class NotificationController {
     public NotificationController(NotificationService notificationService) {
         this.notificationService = notificationService;
     }
+
+    @GetMapping("/preference")
+    public ResponseEntity<NotificationPreferenceResponse> getUserNotificationStatus(@RequestParam(name ="recipientId") UUID recipientId){
+        NotificationPreference preference = notificationService.getPreferenceByRecipientById(recipientId);
+
+        NotificationPreferenceResponse responseDTO = DtoMapper.fromNotificationPreference(preference);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
+
 
     @PostMapping("/preference")
     public ResponseEntity<NotificationPreferenceResponse>updateNotificationPreference(@RequestBody NotificationPreferenceRequest notificationPreferenceRequest){

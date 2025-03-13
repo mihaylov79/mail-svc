@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class NotificationService {
@@ -37,5 +38,11 @@ public class NotificationService {
                         .build());
 
         return notificationPreferenceRepository.save(preference);
+    }
+
+    public NotificationPreference getPreferenceByRecipientById(UUID recipientId) {
+
+        return notificationPreferenceRepository.findByRecipientId(recipientId)
+                .orElseThrow(() -> new NullPointerException("Статуса на нотофикациите за потребител с идентификация [%s]не беше намерен".formatted(recipientId)));
     }
 }
