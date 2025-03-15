@@ -1,6 +1,7 @@
 package mail_svc.service;
 
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import mail_svc.model.Notification;
 import mail_svc.model.NotificationPreference;
 import mail_svc.model.NotificationStatus;
@@ -9,13 +10,16 @@ import mail_svc.repository.NotificationRepository;
 import mail_svc.web.dto.NotificationPreferenceRequest;
 import mail_svc.web.dto.NotificationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Limit;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class NotificationService {
 
@@ -94,9 +98,39 @@ public class NotificationService {
                     .deleted(false)
                     .build();
 
-            notificationRepository.save(notification);
+            log.warn("Изпращането до [%s] беше неуспешно - [s]!".formatted(recipientPreference.getInfo()),e.getMessage());
 
-            throw new RuntimeException("Изпращането беше неуспешно!",e);
+            return notificationRepository.save(notification);
+
         }
+    }
+
+    public List<Notification> getNotificationHistory(UUID recipientId){
+        return notificationRepository
+                .findAllByRecipientIdAndDeletedIsFalseOrderByCreatedDesc(recipientId,false, Limit.of(5));
+    }
+
+    public void resendFailed(UUID recipientId){
+
+        NotificationPreference recipientPreference = getPreferenceByRecipientById(recipientId);
+
+        if (!recipientPreference.isEnabled()){
+            throw new IllegalArgumentException("Нотификациите за  потребител с идентификация [%s] са изключени".formatted(recipientId));
+        }
+
+        notificationRepository.findAllByRecipientIdAndStatus(recipientId,NotificationStatus.FAILED).forEach(n-> {
+            try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message,false,"UTF-8");
+            helper.setTo(recipientPreference.getInfo());
+            helper.setSubject(n.getSubject());
+            helper.setText(n.getContent());
+
+            mailSender.send(message);
+
+            } catch (Exception e) {
+                log.warn("Изпращането до [%s] не беше успешно - [%s]".formatted(recipientPreference.getInfo(),e.getMessage()));
+            }
+        });
     }
 }
