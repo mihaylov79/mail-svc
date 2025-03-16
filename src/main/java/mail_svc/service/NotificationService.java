@@ -118,7 +118,7 @@ public class NotificationService {
 
     public List<Notification> getNotificationHistory(UUID recipientId){
         return notificationRepository
-                .findAllByRecipientIdAndDeletedIsFalseOrderByCreatedDesc(recipientId,false, Limit.of(5));
+                .findAllByRecipientIdAndDeletedIsFalseOrderByCreatedDesc(recipientId, Limit.of(5));
     }
 
     public void resendFailed(UUID recipientId){

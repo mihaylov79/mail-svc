@@ -13,7 +13,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
 
 
 
-    List<Notification> findAllByRecipientIdAndDeletedIsFalseOrderByCreatedDesc(UUID recipientId, boolean deleted, Limit limit);
+    List<Notification> findAllByRecipientIdAndDeletedIsFalseOrderByCreatedDesc(UUID recipientId, Limit limit);
 
     List<Notification> findAllByRecipientIdAndStatus(UUID recipientId, NotificationStatus status);
 
