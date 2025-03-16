@@ -1,9 +1,12 @@
 package mail_svc.web;
 
+import mail_svc.model.Notification;
 import mail_svc.model.NotificationPreference;
 import mail_svc.service.NotificationService;
 import mail_svc.web.dto.NotificationPreferenceRequest;
 import mail_svc.web.dto.NotificationPreferenceResponse;
+import mail_svc.web.dto.NotificationRequest;
+import mail_svc.web.dto.NotificationResponse;
 import mail_svc.web.mapper.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +28,7 @@ public class NotificationController {
 
     @GetMapping("/preference")
     public ResponseEntity<NotificationPreferenceResponse> getUserNotificationStatus(@RequestParam(name ="recipientId") UUID recipientId){
-        NotificationPreference preference = notificationService.getPreferenceByRecipientById(recipientId);
+        NotificationPreference preference = notificationService.getPreferenceByRecipientId(recipientId);
 
         NotificationPreferenceResponse responseDTO = DtoMapper.fromNotificationPreference(preference);
 
@@ -40,5 +43,15 @@ public class NotificationController {
         NotificationPreferenceResponse responseDTO = DtoMapper.fromNotificationPreference(preference);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    @PostMapping
+    public ResponseEntity<NotificationResponse> sendNotification(@RequestBody NotificationRequest notificationRequest){
+
+        Notification notification = notificationService.sendMailNotification(notificationRequest);
+
+        NotificationResponse notificationResponse = DtoMapper.notificationResponseFromNotification(notification);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(notificationResponse);
     }
 }

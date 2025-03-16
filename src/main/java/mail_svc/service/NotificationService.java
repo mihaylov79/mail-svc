@@ -52,10 +52,21 @@ public class NotificationService {
         return notificationPreferenceRepository.save(preference);
     }
 
-    public NotificationPreference getPreferenceByRecipientById(UUID recipientId) {
+    public NotificationPreference getPreferenceByRecipientId(UUID recipientId) {
 
         return notificationPreferenceRepository.findByRecipientId(recipientId)
                 .orElseThrow(() -> new NullPointerException("Статуса на нотофикациите за потребител с идентификация [%s]не беше намерен".formatted(recipientId)));
+    }
+
+    public NotificationPreference changeNotificationPreference(UUID recipientId, boolean enabled){
+
+        NotificationPreference recipientPreference = getPreferenceByRecipientId(recipientId);
+
+        recipientPreference = recipientPreference.toBuilder()
+                        .enabled(enabled)
+                        .build();
+
+        return notificationPreferenceRepository.save(recipientPreference);
     }
 
 
@@ -63,7 +74,7 @@ public class NotificationService {
 
         UUID recipientId = notificationRequest.getRecipientId();
 
-        NotificationPreference recipientPreference = getPreferenceByRecipientById(recipientId);
+        NotificationPreference recipientPreference = getPreferenceByRecipientId(recipientId);
 
         if(!recipientPreference.isEnabled()){
             throw new IllegalArgumentException("Нотификациите за  потребител с идентификация [%s] са изключени".formatted(recipientId));
@@ -112,7 +123,7 @@ public class NotificationService {
 
     public void resendFailed(UUID recipientId){
 
-        NotificationPreference recipientPreference = getPreferenceByRecipientById(recipientId);
+        NotificationPreference recipientPreference = getPreferenceByRecipientId(recipientId);
 
         if (!recipientPreference.isEnabled()){
             throw new IllegalArgumentException("Нотификациите за  потребител с идентификация [%s] са изключени".formatted(recipientId));
@@ -129,8 +140,19 @@ public class NotificationService {
             mailSender.send(message);
 
             } catch (Exception e) {
-                log.warn("Изпращането до [%s] не беше успешно - [%s]".formatted(recipientPreference.getInfo(),e.getMessage()));
+                log.warn("Изпращането до [{}] не беше успешно - [{}]",recipientPreference.getInfo(),e.getMessage());
             }
         });
+    }
+
+    public void clearNotificationHistory(UUID recipientId){
+
+        notificationRepository
+                .findAllByRecipientIdAndDeleted(recipientId,false).forEach(n-> {
+                    n = n.toBuilder()
+                            .deleted(true)
+                            .build();
+                    notificationRepository.save(n);
+                });
     }
 }
