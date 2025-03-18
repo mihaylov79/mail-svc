@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 @Builder
 public class NotificationResponse {
 
+    private String firstName;
+
+    private String lastName;
+
     private String title;
 
     private String content;

@@ -26,6 +26,13 @@ public class Notification {
     private UUID recipientId;
 
     @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
+
+    @Column(nullable = false)
     private String subject;
 
     @Column(nullable = false,columnDefinition = "TEXT")

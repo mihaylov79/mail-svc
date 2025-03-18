@@ -6,7 +6,7 @@ import mail_svc.model.NotificationPreference;
 import mail_svc.web.dto.NotificationPreferenceResponse;
 import mail_svc.web.dto.NotificationResponse;
 
-import javax.swing.text.html.parser.Entity;
+
 import java.time.LocalDateTime;
 
 @UtilityClass
@@ -27,6 +27,8 @@ public class DtoMapper {
            return NotificationResponse.builder()
                    .title(notification.getSubject())
                    .content(notification.getContent())
+                   .firstName(notification.getFirstName())
+                   .lastName(notification.getLastName())
                    .status(notification.getStatus())
                    .created(LocalDateTime.now())
                    .build();

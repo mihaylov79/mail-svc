@@ -14,6 +14,8 @@ import org.springframework.data.domain.Limit;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,12 +28,14 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationPreferenceRepository notificationPreferenceRepository;
     private final JavaMailSender mailSender;
+    private final SpringTemplateEngine templateEngine;
 
     @Autowired
-    public NotificationService(NotificationRepository notificationRepository, NotificationPreferenceRepository notificationPreferenceRepository, JavaMailSender mailSender) {
+    public NotificationService(NotificationRepository notificationRepository, NotificationPreferenceRepository notificationPreferenceRepository, JavaMailSender mailSender, SpringTemplateEngine templateEngine) {
         this.notificationRepository = notificationRepository;
         this.notificationPreferenceRepository = notificationPreferenceRepository;
         this.mailSender = mailSender;
+        this.templateEngine = templateEngine;
     }
 
     public NotificationPreference updateNotificationPreference(NotificationPreferenceRequest preferenceRequest) {
@@ -55,7 +59,7 @@ public class NotificationService {
     public NotificationPreference getPreferenceByRecipientId(UUID recipientId) {
 
         return notificationPreferenceRepository.findByRecipientId(recipientId)
-                .orElseThrow(() -> new NullPointerException("Статуса на нотофикациите за потребител с идентификация [%s]не беше намерен".formatted(recipientId)));
+                .orElseThrow(() -> new NullPointerException("Статуса на извстията за потребител с идентификация [%s]не беше намерен".formatted(recipientId)));
     }
 
     public NotificationPreference changeNotificationPreference(UUID recipientId, boolean enabled){
@@ -77,21 +81,32 @@ public class NotificationService {
         NotificationPreference recipientPreference = getPreferenceByRecipientId(recipientId);
 
         if(!recipientPreference.isEnabled()){
-            throw new IllegalArgumentException("Нотификациите за  потребител с идентификация [%s] са изключени".formatted(recipientId));
+            throw new IllegalArgumentException("Известията за  потребител с идентификация [%s] са изключени".formatted(recipientId));
         }
 
         try {
+
+            Context context = new Context();
+            context.setVariable("firstName",notificationRequest.getFirstName());
+            context.setVariable("lastName",notificationRequest.getLastName());
+            context.setVariable("content",notificationRequest.getContent());
+
+
+            String htmlContent = templateEngine.process("mail",context);
+
             MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message,false,"UTF-8");
+            MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
             helper.setTo(recipientPreference.getInfo());
             helper.setSubject(notificationRequest.getTitle());
-            helper.setText(notificationRequest.getContent());
+            helper.setText(htmlContent,true);
 
             mailSender.send(message);
 
             Notification notification = Notification.builder()
                     .subject(notificationRequest.getTitle())
                     .content(notificationRequest.getContent())
+                    .firstName(notificationRequest.getFirstName())
+                    .lastName(notificationRequest.getLastName())
                     .created(LocalDateTime.now())
                     .recipientId(notificationRequest.getRecipientId())
                     .status(NotificationStatus.COMPLETED)
@@ -103,6 +118,8 @@ public class NotificationService {
             Notification notification = Notification.builder()
                     .subject(notificationRequest.getTitle())
                     .content(notificationRequest.getContent())
+                    .firstName(notificationRequest.getFirstName())
+                    .lastName(notificationRequest.getLastName())
                     .created(LocalDateTime.now())
                     .recipientId(notificationRequest.getRecipientId())
                     .status(NotificationStatus.FAILED)
@@ -126,18 +143,34 @@ public class NotificationService {
         NotificationPreference recipientPreference = getPreferenceByRecipientId(recipientId);
 
         if (!recipientPreference.isEnabled()){
-            throw new IllegalArgumentException("Нотификациите за  потребител с идентификация [%s] са изключени".formatted(recipientId));
+            throw new IllegalArgumentException("Известията за  потребител с идентификация [%s] са изключени".formatted(recipientId));
         }
 
         notificationRepository.findAllByRecipientIdAndStatus(recipientId,NotificationStatus.FAILED).forEach(n-> {
             try {
+
+            Context context = new Context();
+            context.setVariable("firstName",n.getFirstName());
+            context.setVariable("lastName",n.getLastName());
+            context.setVariable("content",n.getContent());
+
+            String htmlContent = templateEngine.process("mail",context);
+
             MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message,false,"UTF-8");
+            MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
             helper.setTo(recipientPreference.getInfo());
             helper.setSubject(n.getSubject());
-            helper.setText(n.getContent());
+            helper.setText(htmlContent,true);
 
             mailSender.send(message);
+
+            n=n.toBuilder()
+                    .status(NotificationStatus.COMPLETED)
+                    .build();
+
+            notificationRepository.save(n);
+
+            //TODO Ако съобщението е изпратено - трябва да се смени статуса на COMPLETED
 
             } catch (Exception e) {
                 log.warn("Изпращането до [{}] не беше успешно - [{}]",recipientPreference.getInfo(),e.getMessage());

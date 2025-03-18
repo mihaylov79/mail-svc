@@ -14,6 +14,12 @@ public class NotificationRequest {
     private UUID recipientId;
 
     @NotBlank
+    private String firstName;
+
+    @NotBlank
+    private String lastName;
+
+    @NotBlank
     private String title;
 
     @NotBlank
