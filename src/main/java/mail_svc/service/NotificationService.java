@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Limit;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
@@ -148,5 +150,19 @@ public class NotificationService {
                             .build();
                     notificationRepository.save(n);
                 });
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0 0 1 * ?") // На всяко 1-во число от месеца
+    public void cleanUpOldNotifications() {
+        LocalDateTime threeMonthsAgo = LocalDateTime.now().minusMonths(3);
+
+        int deletedCount = notificationRepository.deleteByDeletedTrueAndCreatedBefore(threeMonthsAgo);
+
+        if (deletedCount > 0) {
+            log.info("Изтрити {} стари нотификации (преди {}).", deletedCount, threeMonthsAgo);
+        } else {
+            log.info("Няма стари нотификации за изтриване (преди {}).", threeMonthsAgo);
+        }
     }
 }
