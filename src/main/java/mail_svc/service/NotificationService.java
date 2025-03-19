@@ -138,45 +138,6 @@ public class NotificationService {
                 .findAllByRecipientIdAndDeletedIsFalseOrderByCreatedDesc(recipientId, Limit.of(5));
     }
 
-    public void resendFailed(UUID recipientId){
-
-        NotificationPreference recipientPreference = getPreferenceByRecipientId(recipientId);
-
-        if (!recipientPreference.isEnabled()){
-            throw new IllegalArgumentException("Известията за  потребител с идентификация [%s] са изключени".formatted(recipientId));
-        }
-
-        notificationRepository.findAllByRecipientIdAndStatus(recipientId,NotificationStatus.FAILED).forEach(n-> {
-            try {
-
-            Context context = new Context();
-            context.setVariable("firstName",n.getFirstName());
-            context.setVariable("lastName",n.getLastName());
-            context.setVariable("content",n.getContent());
-
-            String htmlContent = templateEngine.process("mail",context);
-
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
-            helper.setTo(recipientPreference.getInfo());
-            helper.setSubject(n.getSubject());
-            helper.setText(htmlContent,true);
-
-            mailSender.send(message);
-
-            n=n.toBuilder()
-                    .status(NotificationStatus.COMPLETED)
-                    .build();
-
-            notificationRepository.save(n);
-
-            //TODO Ако съобщението е изпратено - трябва да се смени статуса на COMPLETED
-
-            } catch (Exception e) {
-                log.warn("Изпращането до [{}] не беше успешно - [{}]",recipientPreference.getInfo(),e.getMessage());
-            }
-        });
-    }
 
     public void clearNotificationHistory(UUID recipientId){
 

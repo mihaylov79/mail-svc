@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
 import java.util.UUID;
 
@@ -37,7 +36,6 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
-
     @PostMapping("/preferences")
     public ResponseEntity<NotificationPreferenceResponse>updateNotificationPreference(@RequestBody NotificationPreferenceRequest notificationPreferenceRequest){
 
@@ -45,6 +43,17 @@ public class NotificationController {
         NotificationPreferenceResponse responseDTO = DtoMapper.fromNotificationPreference(preference);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    @PutMapping("/preferences")
+    public ResponseEntity<NotificationPreferenceResponse>changeNotificationPreferenceStatus(@RequestParam(name = "recipientId") UUID recipientId,
+                                                                                            @RequestParam(name = "enabled") boolean enabled){
+        NotificationPreference notificationPreference = notificationService.changeNotificationPreference(recipientId,enabled);
+
+        NotificationPreferenceResponse responseDto = DtoMapper.fromNotificationPreference(notificationPreference);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+
     }
 
     @PostMapping
@@ -67,16 +76,13 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).body(notificationHistory);
     }
 
-    public ResponseEntity<NotificationPreferenceResponse>changeEmailPreference(@RequestParam(name = "recipientId") UUID recipientId,@RequestParam(name = "enabled") boolean enabled){
+    @DeleteMapping
+    public ResponseEntity<Void>clearHistory(@RequestParam(name = "recipientId") UUID recipientId){
 
-        NotificationPreference preference = notificationService.changeNotificationPreference(recipientId,enabled);
+        notificationService.clearNotificationHistory(recipientId);
 
-        NotificationPreferenceResponse changePreferenceResponse = DtoMapper.fromNotificationPreference(preference);
-
-        return ResponseEntity.status(HttpStatus.OK).body(changePreferenceResponse);
-
-
-
+        return ResponseEntity.status(HttpStatus.OK).body(null);
 
     }
+
 }
