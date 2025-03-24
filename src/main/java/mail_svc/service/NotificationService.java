@@ -61,7 +61,7 @@ public class NotificationService {
     public NotificationPreference getPreferenceByRecipientId(UUID recipientId) {
 
         return notificationPreferenceRepository.findByRecipientId(recipientId)
-                .orElseThrow(() -> new NullPointerException("Статуса на извстията за потребител с идентификация [%s]не беше намерен".formatted(recipientId)));
+                .orElseThrow(() -> new NullPointerException("Статуса на извстията за потребител с идентификация [%s] не беше намерен".formatted(recipientId)));
     }
 
     public NotificationPreference changeNotificationPreference(UUID recipientId, boolean enabled){
