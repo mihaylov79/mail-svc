@@ -3,10 +3,11 @@ package mail_svc.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
-
+@Builder
 @Data
 public class NotificationRequest {
 
