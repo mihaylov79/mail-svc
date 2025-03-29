@@ -4,6 +4,7 @@ package mail_svc.service;
 import mail_svc.model.NotificationPreference;
 import mail_svc.repository.NotificationPreferenceRepository;
 import mail_svc.repository.NotificationRepository;
+import mail_svc.web.dto.NotificationPreferenceRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,7 +17,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,12 +57,45 @@ public class NotificationServiceUTest {
 
         notificationService.changeNotificationPreference(recipientId,true);
 
-//        assertTrue(preference.isEnabled());
         verify(notificationPreferenceRepository,times(1))
                         .save(Mockito.argThat(NotificationPreference::isEnabled));
 
 
     }
+
+    @Test
+    void given_ExistingNotificationPreference_whenUpdateNotificationPreference_then_updatesSuccessfully(){
+
+        UUID recipientId = UUID.randomUUID();
+        NotificationPreferenceRequest preferenceRequest = new NotificationPreferenceRequest();
+        preferenceRequest.setRecipientId(recipientId);
+        preferenceRequest.setInfo("test@example.com");
+        preferenceRequest.setEnabled(true);
+
+        NotificationPreference preference = NotificationPreference.builder()
+                .recipientId(recipientId)
+                .info("old@example.com")
+                .enabled(false).build();
+
+
+        // Настройваме mock за repository
+        when(notificationPreferenceRepository.findByRecipientId(recipientId))
+                .thenReturn(Optional.of(preference));
+
+        when(notificationPreferenceRepository.save(any(NotificationPreference.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Извикваме метода за актуализация
+        NotificationPreference updatedPreference = notificationService.updateNotificationPreference(preferenceRequest);
+
+        // Проверки
+        assertNotNull(updatedPreference);
+        assertEquals(preferenceRequest.getInfo(), updatedPreference.getInfo());
+        assertTrue(updatedPreference.isEnabled());
+        verify(notificationPreferenceRepository, times(1)).save(updatedPreference);
+    }
+
+
 
 
 }
