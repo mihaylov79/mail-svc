@@ -171,7 +171,7 @@ public class NotificationServiceUTest {
 
     @Test
     void given_NotificationRequest_when_sendMailNotificationIfExceptionIsThrown_shouldFailToSendNotification() {
-        // Arrange
+
         UUID recipientId = UUID.randomUUID();
 
         NotificationPreference notificationPreference = NotificationPreference.builder()
@@ -192,10 +192,8 @@ public class NotificationServiceUTest {
 
         when(mailSender.createMimeMessage()).thenThrow(new RuntimeException("Mail sending failed"));
 
-        // Act
         notificationService.sendMailNotification(notificationRequest);
 
-        // Assert
         verify(notificationRepository).save(argThat(n -> n.getStatus() == NotificationStatus.FAILED));
     }
 
@@ -245,7 +243,7 @@ public class NotificationServiceUTest {
     }
 
     @Test
-    void given_schedulerEveryMonth_when_CleanUpOldNotifications_the_deletedShouldBeSetToTrue() {
+    void given_schedulerEveryMonth_when_CleanUpOldNotifications_the_dataShouldBeDeleted() {
 
 
 
@@ -255,6 +253,7 @@ public class NotificationServiceUTest {
 
         verify(notificationRepository).deleteByDeletedTrueAndCreatedBefore(any(LocalDateTime.class));
     }
+
 
 
 }
