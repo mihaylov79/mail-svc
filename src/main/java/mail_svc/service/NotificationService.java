@@ -1,7 +1,9 @@
 package mail_svc.service;
 
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
+import mail_svc.model.ForgottenPasswordRequest;
 import mail_svc.model.Notification;
 import mail_svc.model.NotificationPreference;
 import mail_svc.model.NotificationStatus;
@@ -152,6 +154,30 @@ public class NotificationService {
                 });
     }
 
+    public void sendForgottenPasswordLink(ForgottenPasswordRequest request){
+
+        Context context = new Context();
+        context.setVariable("content",request.getContent());
+
+        String htmlContent = templateEngine.process("forgotten-password",context);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
+            helper.setTo(request.getRecipient());
+            helper.setSubject(request.getTitle());
+            helper.setText(htmlContent,true);
+            mailSender.send(message);
+
+        } catch (MessagingException e) {
+
+            log.warn("Изпращането на връзка за възстановяване на забравена парола до {} беше неуспешно!",request.getRecipient(),e);
+            throw new RuntimeException("мейл с връзка за възстановяването на парола не беше изпратен!");
+        }
+
+
+    }
+
     @Transactional
     @Scheduled(cron = "0 0 0 1 * ?") // На всяко 1-во число от месеца
     public void cleanUpOldNotifications() {
@@ -165,4 +191,6 @@ public class NotificationService {
             log.info("Няма стари нотификации за изтриване (преди {}).", threeMonthsAgo);
         }
     }
+
+
 }

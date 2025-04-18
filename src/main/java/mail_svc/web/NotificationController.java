@@ -1,5 +1,6 @@
 package mail_svc.web;
 
+import mail_svc.model.ForgottenPasswordRequest;
 import mail_svc.model.Notification;
 import mail_svc.model.NotificationPreference;
 import mail_svc.service.NotificationService;
@@ -82,6 +83,14 @@ public class NotificationController {
         notificationService.clearNotificationHistory(recipientId);
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
+
+    }
+
+    @PostMapping("/forgotten-password")
+    public ResponseEntity<Void>sendForgottenPasswordRestore(@RequestBody ForgottenPasswordRequest request){
+        notificationService.sendForgottenPasswordLink(request);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
 
     }
 
