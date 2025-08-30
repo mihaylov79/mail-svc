@@ -150,3 +150,5 @@ resource "azurerm_container_app" "caapp" {
     target_port = 8080
   }
 }
+
+//TODO Да прповеря дали имам всички променливи за дадени като secrets в Github и  дали да подам различна парола за DB_USER
