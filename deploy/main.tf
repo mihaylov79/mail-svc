@@ -49,8 +49,12 @@ resource "azurerm_container_app" "cadb" {
   revision_mode                = "Single"
 
   secret {
-    name = "mailsvc_db_pass"
-    value = var.mailsvc_db_pass
+    name = "mailsvc_db_root_pass"
+    value = var.mailsvc_db_root_pass
+  }
+  secret {
+    name = "mailsvc_db_user_pass"
+    value = var.mailsvc_db_user_pass
   }
 
   template {
@@ -62,7 +66,7 @@ resource "azurerm_container_app" "cadb" {
 
       env {
         name = "MYSQL_ROOT_PASSWORD"
-        secret_name = "mailsvc_db_pass"
+        secret_name = "mailsvc_db_root_pass"
       }
 
       env{
@@ -77,7 +81,7 @@ resource "azurerm_container_app" "cadb" {
 
       env {
         name = "MYSQL_PASSWORD"
-        secret_name = "mailsvc_db_pass"
+        secret_name = "mailsvc_db_user_pass"
       }
 
       volume_mounts {
@@ -108,8 +112,8 @@ resource "azurerm_container_app" "caapp" {
   revision_mode                = "Single"
 
   secret {
-    name = "mailsvc_db_pass"
-    value = var.mailsvc_db_pass
+    name = "mailsvc_db_user_pass"
+    value = var.mailsvc_db_user_pass
   }
 
   template {
@@ -131,7 +135,7 @@ resource "azurerm_container_app" "caapp" {
 
       env {
         name = "DB_PASS"
-        secret_name = "mailsvc_db_pass"
+        secret_name = "mailsvc_db_user_pass"
       }
       env {
         name = "DB_NAME"

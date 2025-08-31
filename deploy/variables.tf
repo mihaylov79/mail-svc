@@ -9,16 +9,21 @@ variable "tenant_id" {
   description = "tenant ID"
 }
 
-variable "mailsvc_db_pass" {
+variable "mailsvc_db_root_pass" {
   type = string
-  description = "Mail-svc database password"
+  description = "Mail-svc database root password"
 }
 
-variable "image_1_name" {
+variable "mailsvc_db_user_pass" {
   type = string
-  description = "Docker image name"
-
-}variable "image_2_name" {
-  type = string
-  description = "Docker image name"
+  description = "Mail-svc database user password"
 }
+
+# variable "image_1_name" {
+#   type = string
+#   description = "Docker image name"
+#
+# }variable "image_2_name" {
+#   type = string
+#   description = "Docker image name"
+# }
