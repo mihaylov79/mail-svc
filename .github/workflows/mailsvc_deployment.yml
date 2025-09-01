@@ -43,4 +43,20 @@ jobs:
         TF_VAR_subscription_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
         TF_VAR_tenant_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
 
+  apply:
+   runs-on: ubuntu-latest
+   needs: init-validate-plan
+
+   steps:
+       - name: Checkout
+         uses: actions/checkout@v4
+
+       - name: Azure Login
+         uses: azure/login@v2
+         with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+   
+   
+
    # TODO : Трябва да се допише Аpply-a 
