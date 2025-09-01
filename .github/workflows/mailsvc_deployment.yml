@@ -16,7 +16,6 @@ jobs:
         working-directory: ./deploy
 
     steps:
-    # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
 
@@ -35,7 +34,7 @@ jobs:
     - name: Terraform Format
       run: terraform fmt -check -recursive
 
-    - name: Terraform Validare
+    - name: Terraform Validate
       run: terraform validate
 
     - name: Terraform Plan
