@@ -48,7 +48,7 @@ resource "azurerm_container_app_environment" "cae" {
 
 # AzAPI resource за Azure File volume
 resource "azapi_resource" "mysql_storage" {
-  type      = "Microsoft.App/managedEnvironments/storages@2022-10-01"
+  type      = "Microsoft.App/managedEnvironments/storages@2024-03-01"
   name      = "mysqlstorage"
   parent_id = azurerm_container_app_environment.cae.id
 
