@@ -23,6 +23,7 @@ jobs:
       uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+        enable-AzPSSession: false
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -67,6 +68,7 @@ jobs:
          uses: azure/login@v2
          with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+          enable-AzPSSession: false
 
        - name: Setup Terraform
          uses: hashicorp/setup-terraform@v3
