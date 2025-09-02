@@ -111,14 +111,14 @@ resource "azurerm_container_app" "cadb" {
       }
 
       volume_mounts {
-        name = "mail_svc_data"
+        name = "mail-svc-data"
         path = "/var/lib/mysql"
       }
     }
 
     # Свързване на volume чрез AzAPI resource
     volume {
-      name         = "mail_svc_data"
+      name         = "mail-svc-data"
       storage_type = "AzureFile"
       storage_name = azapi_resource.mysql_storage.name
     }
