@@ -88,7 +88,7 @@ resource "azurerm_container_app" "cadb" {
 
   template {
     container {
-      cpu    = 1
+      cpu    = 0.5
       image  = "mysql:8.0"
       memory = "1Gi"
       name   = "mailsvc-db"
@@ -148,9 +148,9 @@ resource "azurerm_container_app" "caapp" {
 
   template {
     container {
-      cpu    = 1
+      cpu    = 0.75
       image  = "mihaylov79/mail-svc:latest"
-      memory = "1Gi"
+      memory = "1.5Gi"
       name   = "mail-svc-app"
 
       env {
