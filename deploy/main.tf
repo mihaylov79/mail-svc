@@ -163,7 +163,7 @@ resource "azurerm_container_app" "caapp" {
       }
       env {
         name        = "DB_PASS"
-        secret_name = "mailsvc_db_user_pass"
+        secret_name = "mailsvc-db-user-pass"
       }
       env {
         name  = "DB_NAME"
