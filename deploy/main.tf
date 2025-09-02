@@ -1,42 +1,61 @@
 terraform {
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = "4.42.0"
+    }
+    azapi = {
+      source  = "azure/azapi"
+      version = "1.14.0"
     }
   }
 }
 
 provider "azurerm" {
   features {}
-
 }
 
 resource "azurerm_resource_group" "rg" {
-  name = "mail-svc-rg"
+  name     = "mail-svc-rg"
   location = "Switzerland North"
 }
 
 resource "azurerm_storage_account" "sa" {
-
-  name = "mailsvcstorage"
-  resource_group_name = azurerm_resource_group.rg.name
-  location = azurerm_resource_group.rg.location
-  account_tier = "Standard"
+  name                     = "mailsvcstorage"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
   account_replication_type = "LRS"
-
 }
 
 resource "azurerm_storage_share" "mysql" {
-  name  = "mysqlshare"
+  name               = "mysqlshare"
   storage_account_id = azurerm_storage_account.sa.id
-  quota = 1
+  quota              = 1
 }
 
 resource "azurerm_container_app_environment" "cae" {
   location            = azurerm_resource_group.rg.location
   name                = "mail-svc-env"
   resource_group_name = azurerm_resource_group.rg.name
+}
+
+# AzAPI resource за Azure File volume
+resource "azapi_resource" "mysql_storage" {
+  type      = "Microsoft.App/managedEnvironments/storages@2025-01-01"
+  name      = "mysqlstorage"
+  parent_id = azurerm_container_app_environment.cae.id
+
+  body = jsonencode({
+    properties = {
+      azureFile = {
+        accountName = azurerm_storage_account.sa.name
+        accountKey  = azurerm_storage_account.sa.primary_access_key
+        shareName   = azurerm_storage_share.mysql.name
+        accessMode  = "ReadWrite"
+      }
+    }
+  })
 }
 
 resource "azurerm_container_app" "cadb" {
@@ -46,11 +65,11 @@ resource "azurerm_container_app" "cadb" {
   revision_mode                = "Single"
 
   secret {
-    name = "mailsvc_db_root_pass"
+    name  = "mailsvc_db_root_pass"
     value = var.mailsvc_db_root_pass
   }
   secret {
-    name = "mailsvc_db_user_pass"
+    name  = "mailsvc_db_user_pass"
     value = var.mailsvc_db_user_pass
   }
 
@@ -62,22 +81,19 @@ resource "azurerm_container_app" "cadb" {
       name   = "mailsvc_db"
 
       env {
-        name = "MYSQL_ROOT_PASSWORD"
+        name        = "MYSQL_ROOT_PASSWORD"
         secret_name = "mailsvc_db_root_pass"
       }
-
-      env{
-        name = "MYSQL_DATABASE"
+      env {
+        name  = "MYSQL_DATABASE"
         value = "mailsvc_db"
       }
-
       env {
-        name = "MYSQL_USER"
+        name  = "MYSQL_USER"
         value = "admin_user"
       }
-
       env {
-        name = "MYSQL_PASSWORD"
+        name        = "MYSQL_PASSWORD"
         secret_name = "mailsvc_db_user_pass"
       }
 
@@ -86,20 +102,24 @@ resource "azurerm_container_app" "cadb" {
         path = "/var/lib/mysql"
       }
     }
-    volume {
-      name = "mail_svc_data"
-      storage_name = azurerm_storage_account.sa.name
-      storage_type = "AzureFile"
-      share_name   = azurerm_storage_share.mysql.name
-    }
 
+    # Свързване на volume чрез AzAPI resource
+    volume {
+      name         = "mail_svc_data"
+      storage_type = "AzureFile"
+      storage_name = azapi_resource.mysql_storage.name
+    }
   }
 
   ingress {
     external_enabled = false
-    target_port = 3306
-  }
+    target_port      = 3306
 
+    traffic_weight {
+      latest_revision = true
+      percentage       = 100
+    }
+  }
 }
 
 resource "azurerm_container_app" "caapp" {
@@ -109,7 +129,7 @@ resource "azurerm_container_app" "caapp" {
   revision_mode                = "Single"
 
   secret {
-    name = "mailsvc_db_user_pass"
+    name  = "mailsvc_db_user_pass"
     value = var.mailsvc_db_user_pass
   }
 
@@ -124,21 +144,18 @@ resource "azurerm_container_app" "caapp" {
         name  = "DB_HOST"
         value = "${azurerm_container_app.cadb.name}.${azurerm_container_app_environment.cae.name}.internal"
       }
-
       env {
-        name = "DB_USER"
+        name  = "DB_USER"
         value = "admin_user"
       }
-
       env {
-        name = "DB_PASS"
+        name        = "DB_PASS"
         secret_name = "mailsvc_db_user_pass"
       }
       env {
-        name = "DB_NAME"
+        name  = "DB_NAME"
         value = "mailsvc_db"
       }
-
       env {
         name  = "SPRING_PROFILES_ACTIVE"
         value = "prod"
@@ -148,8 +165,11 @@ resource "azurerm_container_app" "caapp" {
 
   ingress {
     external_enabled = true
-    target_port = 8080
+    target_port      = 8080
+
+    traffic_weight {
+      latest_revision = true
+      percentage       = 100
+    }
   }
 }
-
-//TODO Да прповеря дали имам всички променливи за дадени като secrets в Github и  дали да подам различна парола за DB_USER
