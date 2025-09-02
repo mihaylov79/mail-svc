@@ -17,3 +17,13 @@ variable "tenant_id" {
   type = string
   description = "Tenant ID"
 }
+
+variable "client_id" {
+  type = string
+  description = "CREDENTIALS CHARACTERISTIC"
+}
+
+variable "client_secret" {
+  type = string
+  description = "CREDENTIALS CHARACTERISTIC"
+}
