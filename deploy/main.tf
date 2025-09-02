@@ -131,7 +131,7 @@ resource "azurerm_container_app" "caapp" {
   revision_mode                = "Single"
 
   secret {
-    name  = "mailsvc_db_user_pass"
+    name  = "mailsvc-db-user-pass"
     value = var.mailsvc_db_user_pass
   }
 
