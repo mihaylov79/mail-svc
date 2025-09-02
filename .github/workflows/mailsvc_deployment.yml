@@ -20,9 +20,6 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: false
 
-      - name: Set Azure subscription
-        run: az account set --subscription ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
@@ -36,11 +33,12 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan -var="subscription_id=${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" -var="tenant_id=${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}"
+        run: terraform plan -out=tfplan
         env:
           TF_VAR_mailsvc_db_root_pass: ${{ secrets.DB_ROOT_PASS }}
           TF_VAR_mailsvc_db_user_pass: ${{ secrets.DB_USER_PASS }}
-
+          TF_VAR_subscription_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+          TF_VAR_tenant_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
 
       - name: Upload Terraform plan
         uses: actions/upload-artifact@v4
@@ -65,9 +63,6 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: false
 
-      - name: Set Azure subscription
-        run: az account set --subscription ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
@@ -85,3 +80,5 @@ jobs:
         env:
           TF_VAR_mailsvc_db_root_pass: ${{ secrets.DB_ROOT_PASS }}
           TF_VAR_mailsvc_db_user_pass: ${{ secrets.DB_USER_PASS }}
+          TF_VAR_subscription_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+          TF_VAR_tenant_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
