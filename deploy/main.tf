@@ -13,8 +13,6 @@ terraform {
 
 provider "azurerm" {
   features {}
-  subscription_id = var.subscription_id
-  tenant_id       = var.tenant_id
 }
 
 provider "azapi" {
@@ -46,12 +44,6 @@ resource "azurerm_container_app_environment" "cae" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-# Пауза за да се гарантира създаването на container app environment
-resource "time_sleep" "wait_for_env" {
-  depends_on       = [azurerm_container_app_environment.cae]
-  create_duration  = "20s"
-}
-
 # AzAPI resource за Azure File volume
 resource "azapi_resource" "mysql_storage" {
   type      = "Microsoft.App/managedEnvironments/storages@2024-03-01"
@@ -68,8 +60,6 @@ resource "azapi_resource" "mysql_storage" {
       }
     }
   })
-
-  depends_on = [time_sleep.wait_for_env]
 }
 
 resource "azurerm_container_app" "cadb" {
@@ -82,7 +72,6 @@ resource "azurerm_container_app" "cadb" {
     name  = "mailsvc-db-root-pass"
     value = var.mailsvc_db_root_pass
   }
-
   secret {
     name  = "mailsvc-db-user-pass"
     value = var.mailsvc_db_user_pass
@@ -118,6 +107,7 @@ resource "azurerm_container_app" "cadb" {
       }
     }
 
+    # Свързване на volume чрез AzAPI resource
     volume {
       name         = "mail_svc_data"
       storage_type = "AzureFile"
@@ -131,7 +121,7 @@ resource "azurerm_container_app" "cadb" {
 
     traffic_weight {
       latest_revision = true
-      percentage      = 100
+      percentage       = 100
     }
   }
 }
@@ -183,7 +173,7 @@ resource "azurerm_container_app" "caapp" {
 
     traffic_weight {
       latest_revision = true
-      percentage      = 100
+      percentage       = 100
     }
   }
 }

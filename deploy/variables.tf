@@ -8,12 +8,12 @@ variable "mailsvc_db_user_pass" {
   description = "Mail-svc database user password"
 }
 
-variable "subscription_id" {
-  type = string
-  description = "Subscription ID"
-}
-
-variable "tenant_id" {
-  type = string
-  description = "Tenant ID"
-}
+# variable "subscription_id" {
+#   type = string
+#   description = "Subscription ID"
+# }
+#
+# variable "tenant_id" {
+#   type = string
+#   description = "Tenant ID"
+# }
