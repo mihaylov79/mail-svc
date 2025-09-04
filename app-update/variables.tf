@@ -21,6 +21,7 @@ variable "cae_id" {
 
 variable "rg_name" {
   type        = string
+  default     = "mail-svc-rg"
   description = "Resource group, в която е app-a"
 }
 
