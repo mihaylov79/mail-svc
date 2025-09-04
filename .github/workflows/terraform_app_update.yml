@@ -33,6 +33,7 @@ jobs:
     - name: Terraform Import
       run: terraform import azurerm_container_app.caapp "/subscriptions/<sub_id>/resourceGroups/my-rg/providers/Microsoft.App/containerApps/mail-svc-app-container-app"
       env:
+        TF_VAR_deploy_version: "0"
         TF_VAR_cae_id: "/subscriptions/<sub_id>/resourceGroups/my-rg/providers/Microsoft.App/managedEnvironments/mail-svc-env"
         TF_VAR_subscription_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
         TF_VAR_tenant_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
