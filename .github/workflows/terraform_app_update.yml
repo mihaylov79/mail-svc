@@ -42,6 +42,8 @@ jobs:
         TF_VAR_deploy_version: ${{ github.run_number }}
         TF_VAR_cae_id: ${{ secrets.CAE_ID }}
         TF_VAR_mailsvc_db_user_pass: ${{ secrets.DB_PASS }}
+        TF_VAR_subscription_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+        TF_VAR_tenant_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
 
      
     - name: Terraform Apply
@@ -50,3 +52,5 @@ jobs:
         TF_VAR_deploy_version: ${{ github.run_number }}
         TF_VAR_cae_id: ${{ secrets.CAE_ID }}
         TF_VAR_mailsvc_db_user_pass: ${{ secrets.DB_PASS }}
+        TF_VAR_subscription_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+        TF_VAR_tenant_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
