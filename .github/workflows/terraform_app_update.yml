@@ -1,0 +1,52 @@
+name: 'mail-svc-app-update'
+
+on:
+  workflow_run:
+    workflows: [Build and Test]
+    types:
+      - completed
+    
+
+jobs:
+  app-update:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./app-update
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+     
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Format
+      run: terraform fmt -recursive
+
+    - name: Terraform Validate
+      run: terraform validate
+      
+    - name: Terraform Plan
+      run: terraform plan
+      env:
+        TF_VAR_deploy_version: ${{ github.run_number }}
+        TF_VAR_cae_id: ${{ secrets.CAE_ID }}
+        TF_VAR_mailsvc_db_user_pass: ${{ secrets.DB_PASS }}
+
+     
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      env:
+        TF_VAR_deploy_version: ${{ github.run_number }}
+        TF_VAR_cae_id: ${{ secrets.CAE_ID }}
+        TF_VAR_mailsvc_db_user_pass: ${{ secrets.DB_PASS }}
