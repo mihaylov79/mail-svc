@@ -49,7 +49,7 @@ jobs:
       run: terraform plan
       env:
         TF_VAR_deploy_version: ${{ github.run_number }}
-        TF_VAR_cae_id: "/subscriptions/<sub_id>/resourceGroups/my-rg/providers/Microsoft.App/managedEnvironments/mail-svc-env"
+        TF_VAR_cae_id: "/subscriptions/${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}/resourceGroups/mail-svc-rg/providers/Microsoft.App/managedEnvironments/mail-svc-env"
         TF_VAR_mailsvc_db_user_pass: ${{ secrets.DB_PASS }}
         TF_VAR_subscription_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
         TF_VAR_tenant_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
@@ -59,7 +59,7 @@ jobs:
       run: terraform apply -auto-approve
       env:
         TF_VAR_deploy_version: ${{ github.run_number }}
-        TF_VAR_cae_id: "/subscriptions/<sub_id>/resourceGroups/my-rg/providers/Microsoft.App/managedEnvironments/mail-svc-env"
+        TF_VAR_cae_id: "/subscriptions/${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}/resourceGroups/mail-svc-rg/providers/Microsoft.App/managedEnvironments/mail-svc-env"
         TF_VAR_mailsvc_db_user_pass: ${{ secrets.DB_PASS }}
         TF_VAR_subscription_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
         TF_VAR_tenant_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
