@@ -28,6 +28,12 @@ resource "azurerm_container_app" "caapp" {
     value = var.mailsvc_db_user_pass
   }
 
+  lifecycle {
+    ignore_changes = [
+      secret,
+    ]
+  }
+
   template {
     container {
       cpu    = 0.75
