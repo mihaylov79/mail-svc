@@ -23,6 +23,11 @@ resource "azurerm_container_app" "caapp" {
   resource_group_name          = "mail-svc-rg"
   revision_mode                = "Single"
 
+  secret {
+    name  = "mailsvc-db-user-pass"
+    value = var.mailsvc_db_user_pass
+  }
+
   template {
     container {
       cpu    = 0.75
@@ -30,11 +35,41 @@ resource "azurerm_container_app" "caapp" {
       memory = "1.5Gi"
       name   = "mail-svc-app"
 
+      env {
+        name  = "DB_HOST"
+        value = "mail-svc-db-container-app.mail-svc-env.internal"
+      }
+      env {
+        name  = "DB_USER"
+        value = "admin_user"
+      }
+      env {
+        name        = "DB_PASS"
+        secret_name = "mailsvc-db-user-pass"
+      }
+      env {
+        name  = "DB_NAME"
+        value = "mailsvc_db"
+      }
+      env {
+        name  = "SPRING_PROFILES_ACTIVE"
+        value = "prod"
+      }
 
       env {
         name = "DEPLOY_VERSION"
         value = var.deploy_version
       }
+    }
+  }
+
+  ingress {
+    external_enabled = true
+    target_port      = 8080
+
+    traffic_weight {
+      latest_revision = true
+      percentage       = 100
     }
   }
 
