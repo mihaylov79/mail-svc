@@ -2,9 +2,9 @@ name: 'mail-svc-app-update'
 
 on:
   workflow_run:
-    workflows: [Build and Test]
-    types:
-      - completed
+    # workflows: [Build and Test]
+    # types:
+    #   - completed
 
   workflow_dispatch:
     
