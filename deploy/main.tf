@@ -54,6 +54,8 @@ resource "azapi_resource" "mysql_storage" {
   name = "mysqldiskstorage"
   parent_id = azurerm_container_app_environment.cae.id
 
+  schema_validation_enabled = false
+
   body = jsonencode({
     properties = {
       azureDisk = {
