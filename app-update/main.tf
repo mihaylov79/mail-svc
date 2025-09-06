@@ -28,6 +28,11 @@ resource "azurerm_container_app" "caapp" {
     value = var.mailsvc_db_user_pass
   }
 
+  secret {
+    name = "mail-pass"
+    value = var.mailsvc_mail_pass
+  }
+
   lifecycle {
     ignore_changes = [
       secret,
@@ -43,7 +48,8 @@ resource "azurerm_container_app" "caapp" {
 
       env {
         name  = "DB_HOST"
-        value = "mail-svc-db-container-app.mail-svc-env.internal"
+        value = "mail-svc-db-container-app.internal.ashywave-cc10a3c0.switzerlandnorth.azurecontainerapps.io"
+        # value = "mail-svc-db-container-app.mail-svc-env.internal"
       }
       env {
         name  = "DB_USER"
@@ -53,6 +59,17 @@ resource "azurerm_container_app" "caapp" {
         name        = "DB_PASS"
         secret_name = "mailsvc-db-user-pass"
       }
+
+      env {
+        name = "MAIL_USER"
+        value = "d.dojo.team@gmail.com"
+      }
+
+      env {
+        name = "MAIL_PASS"
+        secret_name = "mail-pass"
+      }
+
       env {
         name  = "DB_NAME"
         value = "mailsvc_db"
