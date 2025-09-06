@@ -40,6 +40,7 @@ jobs:
         TF_VAR_subscription_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
         TF_VAR_tenant_id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
         TF_VAR_mailsvc_db_user_pass: ${{ secrets.DB_USER_PASS }}
+        TF_VAR_mailsvc_mail_pass: ${{secrets.MAIL_PASS}}
 
     - name: Terraform Format
       run: terraform fmt -recursive
