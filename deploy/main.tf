@@ -33,15 +33,19 @@ resource "azurerm_resource_group" "rg" {
   location = "Switzerland North"
 }
 
-resource "azurerm_managed_disk" "disk" {
-  create_option        = "Empty"
-  location             = azurerm_resource_group.rg.location
-  name                 = "mysql-disk"
-  resource_group_name  = azurerm_resource_group.rg.name
-  storage_account_type = "Standard_LRS"
-  disk_size_gb = 2
-}
+# resource "azurerm_storage_account" "sa" {
+#   name                     = "mailsvcstorage"
+#   resource_group_name      = azurerm_resource_group.rg.name
+#   location                 = azurerm_resource_group.rg.location
+#   account_tier             = "Standard"
+#   account_replication_type = "LRS"
+# }
 
+# resource "azurerm_storage_share" "mysql" {
+#   name               = "mysqlshare"
+#   storage_account_id = azurerm_storage_account.sa.id
+#   quota              = 1
+# }
 
 resource "azurerm_container_app_environment" "cae" {
   location            = azurerm_resource_group.rg.location
@@ -49,24 +53,23 @@ resource "azurerm_container_app_environment" "cae" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-resource "azapi_resource" "mysql_storage" {
-  type = "Microsoft.App/managedEnvironments/storages@2024-03-01"
-  name = "mysqldiskstorage"
-  parent_id = azurerm_container_app_environment.cae.id
-
-  schema_validation_enabled = false
-
-  body = jsonencode({
-    properties = {
-      azureDisk = {
-        diskName = azurerm_managed_disk.disk.name
-        accessMode = "ReadWrite"
-      }
-  }
-  }
-  )
-
-}
+# AzAPI resource за Azure File volume
+# resource "azapi_resource" "mysql_storage" {
+#   type      = "Microsoft.App/managedEnvironments/storages@2022-10-01"
+#   name      = "mysqlstorage"
+#   parent_id = azurerm_container_app_environment.cae.id
+#
+#   body = jsonencode({
+#     properties = {
+#       azureFile = {
+#         accountName = azurerm_storage_account.sa.name
+#         accountKey  = azurerm_storage_account.sa.primary_access_key
+#         shareName   = azurerm_storage_share.mysql.name
+#         accessMode  = "ReadWrite"
+#       }
+#     }
+#   })
+# }
 
 resource "azurerm_container_app" "cadb" {
   container_app_environment_id = azurerm_container_app_environment.cae.id
@@ -107,18 +110,18 @@ resource "azurerm_container_app" "cadb" {
         secret_name = "mailsvc-db-user-pass"
       }
 
-      volume_mounts {
-        name = "mail-svc-data"
-        path = "/var/lib/mysql"
-      }
+      # volume_mounts {
+      #   name = "mail-svc-data"
+      #   path = "/var/lib/mysql"
+      # }
     }
 
     # Свързване на volume чрез AzAPI resource
-    volume {
-      name         = "mail-svc-data"
-      storage_type = "Custom"
-      storage_name = azapi_resource.mysql_storage.name
-    }
+    # volume {
+    #   name         = "mail-svc-data"
+    #   storage_type = "AzureFile"
+    #   storage_name = azapi_resource.mysql_storage.name
+    # }
   }
 
   ingress {
