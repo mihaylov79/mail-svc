@@ -49,7 +49,22 @@ resource "azurerm_container_app_environment" "cae" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
+resource "azapi_resource" "mysql_storage" {
+  type = "Microsoft.App/managedEnvironments/storages@2022-10-01"
+  name = "mysqldiskstorage"
+  parent_id = azurerm_container_app_environment.cae.id
 
+  body = jsonencode({
+    properties = {
+      azureDisk = {
+        diskName = azurerm_managed_disk.disk.name
+        accessMode = "ReadWrite"
+      }
+  }
+  }
+  )
+
+}
 
 resource "azurerm_container_app" "cadb" {
   container_app_environment_id = azurerm_container_app_environment.cae.id
@@ -99,8 +114,8 @@ resource "azurerm_container_app" "cadb" {
     # Свързване на volume чрез AzAPI resource
     volume {
       name         = "mail-svc-data"
-      storage_type = "AzureDisk"
-      storage_name = azurerm_managed_disk.disk.name
+      storage_type = "Custom"
+      storage_name = azapi_resource.mysql_storage.name
     }
   }
 
