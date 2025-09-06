@@ -146,6 +146,11 @@ resource "azurerm_container_app" "caapp" {
     value = var.mailsvc_db_user_pass
   }
 
+  secret {
+    name = "mail-pass"
+    value = var.mailsvc_mail_pass
+  }
+
 
   template {
     container {
@@ -170,6 +175,17 @@ resource "azurerm_container_app" "caapp" {
         name  = "DB_NAME"
         value = "mailsvc_db"
       }
+
+      env {
+        name = "MAIL_USER"
+        value = "d.dojo.team@gmail.com"
+      }
+
+      env {
+        name = "MAIL_PASS"
+        secret_name = "mail-pass"
+      }
+
       env {
         name  = "SPRING_PROFILES_ACTIVE"
         value = "prod"
