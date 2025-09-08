@@ -93,6 +93,9 @@ resource "azurerm_container_app" "cadb" {
       memory = "1Gi"
       name   = "mailsvc-db"
 
+      command = ["mysqld", "--bind-address=0.0.0.0"]
+
+
       env {
         name        = "MYSQL_ROOT_PASSWORD"
         secret_name = "mailsvc-db-root-pass"
