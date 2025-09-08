@@ -93,7 +93,10 @@ resource "azurerm_container_app" "cadb" {
       memory = "1Gi"
       name   = "mailsvc-db"
 
-      command = ["mysqld", "--datadir=/tmp/mysql", "--bind-address=0.0.0.0"]
+      command = [
+        "sh", "-c",
+        "mkdir -p /tmp/mysql && chown mysql:mysql /tmp/mysql && exec mysqld --datadir=/tmp/mysql --bind-address=0.0.0.0"
+      ]
 
 
       env {
