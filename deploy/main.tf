@@ -33,19 +33,19 @@ resource "azurerm_resource_group" "rg" {
   location = "Switzerland North"
 }
 
-resource "azurerm_storage_account" "sa" {
-  name                     = "mailsvcstorage"
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
+# resource "azurerm_storage_account" "sa" {
+#   name                     = "mailsvcstorage"
+#   resource_group_name      = azurerm_resource_group.rg.name
+#   location                 = azurerm_resource_group.rg.location
+#   account_tier             = "Standard"
+#   account_replication_type = "LRS"
+# }
 
-resource "azurerm_storage_share" "mysql" {
-  name               = "mysqlshare"
-  storage_account_id = azurerm_storage_account.sa.id
-  quota              = 1
-}
+# resource "azurerm_storage_share" "mysql" {
+#   name               = "mysqlshare"
+#   storage_account_id = azurerm_storage_account.sa.id
+#   quota              = 1
+# }
 
 resource "azurerm_container_app_environment" "cae" {
   location            = azurerm_resource_group.rg.location
@@ -54,22 +54,22 @@ resource "azurerm_container_app_environment" "cae" {
 }
 
 # AzAPI resource за Azure File volume
-resource "azapi_resource" "mysql_storage" {
-  type      = "Microsoft.App/managedEnvironments/storages@2022-10-01"
-  name      = "mysqlstorage"
-  parent_id = azurerm_container_app_environment.cae.id
-
-  body = jsonencode({
-    properties = {
-      azureFile = {
-        accountName = azurerm_storage_account.sa.name
-        accountKey  = azurerm_storage_account.sa.primary_access_key
-        shareName   = azurerm_storage_share.mysql.name
-        accessMode  = "ReadWrite"
-      }
-    }
-  })
-}
+# resource "azapi_resource" "mysql_storage" {
+#   type      = "Microsoft.App/managedEnvironments/storages@2022-10-01"
+#   name      = "mysqlstorage"
+#   parent_id = azurerm_container_app_environment.cae.id
+#
+#   body = jsonencode({
+#     properties = {
+#       azureFile = {
+#         accountName = azurerm_storage_account.sa.name
+#         accountKey  = azurerm_storage_account.sa.primary_access_key
+#         shareName   = azurerm_storage_share.mysql.name
+#         accessMode  = "ReadWrite"
+#       }
+#     }
+#   })
+# }
 
 resource "azurerm_container_app" "cadb" {
   container_app_environment_id = azurerm_container_app_environment.cae.id
@@ -93,6 +93,7 @@ resource "azurerm_container_app" "cadb" {
       memory = "1Gi"
       name   = "mailsvc-db"
 
+
       env {
         name        = "MYSQL_ROOT_PASSWORD"
         secret_name = "mailsvc-db-root-pass"
@@ -110,18 +111,18 @@ resource "azurerm_container_app" "cadb" {
         secret_name = "mailsvc-db-user-pass"
       }
 
-      volume_mounts {
-        name = "mail-svc-data"
-        path = "/var/lib/mysql"
-      }
+      # volume_mounts {
+      #   name = "mail-svc-data"
+      #   path = "/var/lib/mysql"
+      # }
     }
 
     # Свързване на volume чрез AzAPI resource
-    volume {
-      name         = "mail-svc-data"
-      storage_type = "AzureFile"
-      storage_name = azapi_resource.mysql_storage.name
-    }
+    # volume {
+    #   name         = "mail-svc-data"
+    #   storage_type = "AzureFile"
+    #   storage_name = azapi_resource.mysql_storage.name
+    # }
   }
 
   ingress {
@@ -144,6 +145,11 @@ resource "azurerm_container_app" "caapp" {
   secret {
     name  = "mailsvc-db-user-pass"
     value = var.mailsvc_db_user_pass
+  }
+
+  secret {
+    name = "mail-pass"
+    value = var.mailsvc_mail_pass
   }
 
 
@@ -170,6 +176,17 @@ resource "azurerm_container_app" "caapp" {
         name  = "DB_NAME"
         value = "mailsvc_db"
       }
+
+      env {
+        name = "MAIL_USER"
+        value = "d.dojo.team@gmail.com"
+      }
+
+      env {
+        name = "MAIL_PASS"
+        secret_name = "mail-pass"
+      }
+
       env {
         name  = "SPRING_PROFILES_ACTIVE"
         value = "prod"
@@ -179,7 +196,7 @@ resource "azurerm_container_app" "caapp" {
 
   ingress {
     external_enabled = true
-    target_port      = 8080
+    target_port      = 8081
 
     traffic_weight {
       latest_revision = true

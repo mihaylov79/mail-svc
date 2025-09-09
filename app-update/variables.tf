@@ -4,6 +4,11 @@ variable "mailsvc_db_user_pass" {
   description = "Mail-svc database user password"
 }
 
+variable "mailsvc_mail_pass" {
+  type        = string
+  description = "Mail-svc mail password"
+}
+
 variable "subscription_id" {
   type = string
   description = "Subscription ID"
