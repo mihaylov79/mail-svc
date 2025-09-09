@@ -48,8 +48,8 @@ resource "azurerm_container_app" "caapp" {
 
       env {
         name  = "DB_HOST"
-        value = "mail-svc-db-container-app.internal.greenflower-f9794f8d.switzerlandnorth.azurecontainerapps.io"
-        # value = "mail-svc-db-container-app.mail-svc-env.internal"
+        # value = "mail-svc-db-container-app.internal.greenflower-f9794f8d.switzerlandnorth.azurecontainerapps.io"
+        value = "mail-svc-db-container-app.mail-svc-env.internal"
       }
       env {
         name  = "DB_USER"
@@ -88,7 +88,7 @@ resource "azurerm_container_app" "caapp" {
 
   ingress {
     external_enabled = true
-    target_port      = 8080
+    target_port      = 8081
 
     traffic_weight {
       latest_revision = true
