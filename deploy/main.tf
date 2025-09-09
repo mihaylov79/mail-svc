@@ -86,13 +86,6 @@ resource "azurerm_container_app" "cadb" {
     value = var.mailsvc_db_user_pass
   }
 
-  secret {
-    name  = "mysql-config-cnf"
-    value = <<EOT
-[mysqld]
-bind-address=0.0.0.0
-EOT
-  }
 
   template {
     container {
@@ -137,11 +130,6 @@ EOT
     #   storage_type = "AzureFile"
     #   storage_name = azapi_resource.mysql_storage.name
     # }
-    volume {
-      name         = "mysql-config"
-      storage_type = "Secret"
-      storage_name = "mysql-config-cnf"
-    }
   }
 
   ingress {
