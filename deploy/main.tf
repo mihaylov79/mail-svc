@@ -112,12 +112,6 @@ resource "azurerm_container_app" "cadb" {
         secret_name = "mailsvc-db-user-pass"
       }
 
-      volume_mounts {
-        name      = "mysql-config"
-        path = "/etc/mysql/conf.d/custom.cnf"
-        sub_path   = "custom.cnf"
-      }
-
       # volume_mounts {
       #   name = "mail-svc-data"
       #   path = "/var/lib/mysql"
