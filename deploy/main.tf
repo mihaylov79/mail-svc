@@ -86,6 +86,14 @@ resource "azurerm_container_app" "cadb" {
     value = var.mailsvc_db_user_pass
   }
 
+  secret {
+    name  = "mysql-config-cnf"
+    value = <<EOT
+[mysqld]
+bind-address=0.0.0.0
+EOT
+  }
+
   template {
     container {
       cpu    = 0.5
@@ -111,8 +119,11 @@ resource "azurerm_container_app" "cadb" {
         secret_name = "mailsvc-db-user-pass"
       }
 
-      # добавяме само аргумента
-      args = ["--bind-address=0.0.0.0"]
+      volume_mounts {
+        name      = "mysql-config"
+        path = "/etc/mysql/conf.d/custom.cnf"
+        sub_path   = "custom.cnf"
+      }
 
       # volume_mounts {
       #   name = "mail-svc-data"
@@ -126,6 +137,11 @@ resource "azurerm_container_app" "cadb" {
     #   storage_type = "AzureFile"
     #   storage_name = azapi_resource.mysql_storage.name
     # }
+    volume {
+      name         = "mysql-config"
+      storage_type = "Secret"
+      storage_name = "mysql-config-cnf"
+    }
   }
 
   ingress {
