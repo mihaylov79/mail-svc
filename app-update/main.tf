@@ -48,8 +48,8 @@ resource "azurerm_container_app" "caapp" {
 
       env {
         name  = "DB_HOST"
-        value = "mail-svc-db-container-app.internal.orangeriver-27d083f7.switzerlandnorth.azurecontainerapps.io"
-        # value = "mail-svc-db-container-app.mail-svc-env.internal"
+        # value = "mail-svc-db-container-app.internal.orangeriver-27d083f7.switzerlandnorth.azurecontainerapps.io"
+        value = "mail-svc-db-container-app.mail-svc-env.internal"
       }
       env {
         name  = "DB_USER"
