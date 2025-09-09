@@ -112,6 +112,11 @@ resource "azurerm_container_app" "cadb" {
         secret_name = "mailsvc-db-user-pass"
       }
 
+      env {
+        name  = "MYSQL_ROOT_HOST"
+        value = "%"
+      }
+
       # volume_mounts {
       #   name = "mail-svc-data"
       #   path = "/var/lib/mysql"
