@@ -111,6 +111,9 @@ resource "azurerm_container_app" "cadb" {
         secret_name = "mailsvc-db-user-pass"
       }
 
+      # добавяме само аргумента
+      args = ["--bind-address=0.0.0.0"]
+
       # volume_mounts {
       #   name = "mail-svc-data"
       #   path = "/var/lib/mysql"

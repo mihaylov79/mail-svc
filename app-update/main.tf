@@ -83,10 +83,6 @@ resource "azurerm_container_app" "caapp" {
         name = "DEPLOY_VERSION"
         value = var.deploy_version
       }
-
-      # добавяме само аргумента
-      args = ["--bind-address=0.0.0.0"]
-
     }
   }
 
