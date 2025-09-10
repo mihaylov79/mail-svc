@@ -171,7 +171,7 @@ resource "azurerm_container_app" "caapp" {
         value = "admin_user"
       }
       env {
-        name        = "DB_PASS"
+        name        = "MYSQL_PASSWORD"
         secret_name = "mailsvc-db-user-pass"
       }
       env {
