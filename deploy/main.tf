@@ -190,6 +190,11 @@ resource "azurerm_container_app" "caapp" {
       }
 
       env {
+        name = "DB_PORT"
+        value = "3306"
+      }
+
+      env {
         name  = "SPRING_PROFILES_ACTIVE"
         value = "prod"
       }
