@@ -117,6 +117,7 @@ resource "azurerm_container_app" "cadb" {
       #   path = "/var/lib/mysql"
       # }
     }
+    min_replicas = 1
 
     # Свързване на volume чрез AzAPI resource
     # volume {
@@ -200,6 +201,7 @@ resource "azurerm_container_app" "caapp" {
         value = "prod"
       }
     }
+    min_replicas = 1
   }
 
   ingress {
