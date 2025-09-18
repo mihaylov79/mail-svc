@@ -129,6 +129,7 @@ resource "azurerm_container_app" "cadb" {
   ingress {
     external_enabled = false
     target_port      = 3306
+    transport        = "tcp"
 
     traffic_weight {
       latest_revision = true
