@@ -164,7 +164,8 @@ resource "azurerm_container_app" "caapp" {
 
       env {
         name  = "DB_HOST"
-        value = "${azurerm_container_app.cadb.name}.${azurerm_container_app_environment.cae.name}.internal"
+        # value = "${azurerm_container_app.cadb.name}.${azurerm_container_app_environment.cae.name}.internal"
+        value = azurerm_container_app.cadb.name
       }
       env {
         name  = "DB_USER"
