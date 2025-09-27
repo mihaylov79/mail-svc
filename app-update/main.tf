@@ -48,8 +48,6 @@ resource "azurerm_container_app" "caapp" {
 
       env {
         name  = "DB_HOST"
-        # value = "mail-svc-db-container-app.internal.niceground-dd12bd4e.switzerlandnorth.azurecontainerapps.io"
-        # value = "mail-svc-db-container-app.mail-svc-env.internal"
         value = "mail-svc-db-container-app"
       }
       env {
@@ -57,7 +55,7 @@ resource "azurerm_container_app" "caapp" {
         value = "admin_user"
       }
       env {
-        name        = "DB_PASS"
+        name        = "MYSQL_PASSWORD"
         secret_name = "mailsvc-db-user-pass"
       }
 
@@ -75,6 +73,12 @@ resource "azurerm_container_app" "caapp" {
         name  = "DB_NAME"
         value = "mailsvc_db"
       }
+
+      env {
+        name = "DB_PORT"
+        value = "3306"
+      }
+
       env {
         name  = "SPRING_PROFILES_ACTIVE"
         value = "prod"
