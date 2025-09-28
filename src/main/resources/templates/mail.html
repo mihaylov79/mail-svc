@@ -81,7 +81,7 @@
         <div class="content">
             <p>Здравейте, <strong th:text="${firstName} + ' ' + ${lastName}">[[${firstName}]] [[${lastName}]]</strong>!</p>
             <p th:text="${content}">[[${content}]]</p>
-            <a href="http://localhost:8080/home" class="btn">Към профила</a>
+            <a th:href="https://dragon-dojo.azurewebsites.net/home" class="btn">Към профила</a>
         </div>
         <div class="footer">
             <p>Това е автоматично генерирано съобщение. Моля не отговаряйте.За допълнителни въпроси обърнете се към администраторите или на място в залата.</p>
