@@ -4,7 +4,7 @@ COPY . .
 RUN mvn clean package
 
 
-FROM openjdk:17-jdk
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 COPY  --from=build /app/target/mail-svc-*.jar app.jar
 EXPOSE 8081
