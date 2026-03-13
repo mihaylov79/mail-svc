@@ -3,10 +3,7 @@ package mail_svc.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
-import mail_svc.model.ForgottenPasswordRequest;
-import mail_svc.model.Notification;
-import mail_svc.model.NotificationPreference;
-import mail_svc.model.NotificationStatus;
+import mail_svc.model.*;
 import mail_svc.repository.NotificationPreferenceRepository;
 import mail_svc.repository.NotificationRepository;
 import mail_svc.web.dto.NotificationPreferenceRequest;
@@ -176,6 +173,29 @@ public class NotificationService {
         }
 
 
+    }
+
+    public void sendParentConsentLink(ParentConsentRequest request){
+
+        Context context = new Context();
+        context.setVariable("childFirstName",request.getChildFirstName());
+        context.setVariable("childLastName",request.getChildLastName());
+        context.setVariable("agreementContent",request.getAgreementContent());
+        context.setVariable("consentLink",request.getConsentLink());
+
+        String htmlContent = templateEngine.process("parent-consent",context);
+
+        try {
+            MimeMessage message  = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
+            helper.setTo(request.getParentEmail());
+            helper.setSubject("Общи условия за провеждане  на тенировки в Драгон Доджо за  %s %s"
+                    .formatted(request.getChildFirstName(),request.getChildLastName()));
+            helper.setText(htmlContent,true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Transactional

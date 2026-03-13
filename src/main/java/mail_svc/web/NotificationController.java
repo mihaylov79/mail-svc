@@ -3,6 +3,7 @@ package mail_svc.web;
 import mail_svc.model.ForgottenPasswordRequest;
 import mail_svc.model.Notification;
 import mail_svc.model.NotificationPreference;
+import mail_svc.model.ParentConsentRequest;
 import mail_svc.service.NotificationService;
 import mail_svc.web.dto.NotificationPreferenceRequest;
 import mail_svc.web.dto.NotificationPreferenceResponse;
@@ -93,5 +94,13 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).build();
 
     }
+
+    @PostMapping("/consents")
+    public ResponseEntity<Void>sendParentConsentEmail(@RequestBody ParentConsentRequest request){
+        notificationService.sendParentConsentLink(request);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+
+     }
 
 }
