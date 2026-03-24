@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Родителско съгласие</title>
+    <style>
+        @font-face {
+            font-family: 'Caveat';
+            src: url('data:font/woff2;base64,YOUR_BASE64_HERE') format('woff2');
+        }
+        body {
+            font-family: "Caveat", Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+        }
+        .content {
+            font-size: 18px;
+            color: #555;
+            padding: 20px;
+            text-align: left;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            background: #e18e09;
+            color: white!important;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            margin-top: 24px;
+        }
+        .btn:hover {
+            background: #d17706;
+        }
+        .logo {
+            width: 600px;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+            margin: 10px auto;
+        }
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            padding: 10px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <img src="https://fujimae.com/8457-zoom_producto/training-kyokushin-kan-karate-gi.jpg" alt="Dragon Dojo Logo" class="logo">
+        <div class="header">Dragon Dojo</div>
+        <div class="content">
+            <h2 style="color:#2d3e50; margin-bottom: 20px;">Родителско съгласие за <span th:text="${childFirstName}"></span> <span th:text="${childLastName}"></span></h2>
+            <div th:utext="${agreementContent}"></div>
+            <a th:href="${consentLink}" class="btn">Потвърди съгласието</a>
+        </div>
+        <div class="footer">
+            Това е автоматично генерирано съобщение. Моля не отговаряйте. За допълнителни въпроси обърнете се към администраторите или на място в залата.<br>
+            &copy; 2026 Драгон Доджо
+        </div>
+    </div>
+</body>
+</html>
