@@ -189,7 +189,7 @@ public class NotificationService {
             MimeMessage message  = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
             helper.setTo(request.getParentEmail());
-            helper.setSubject("Общи условия за провеждане  на тенировки в Драгон Доджо за  %s %s"
+            helper.setSubject("Общи условия за провеждане на тренировки в Драгон Доджо за  %s %s"
                     .formatted(request.getChildFirstName(),request.getChildLastName()));
             helper.setText(htmlContent,true);
             mailSender.send(message);
