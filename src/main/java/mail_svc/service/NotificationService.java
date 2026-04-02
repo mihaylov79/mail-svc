@@ -175,12 +175,12 @@ public class NotificationService {
 
     }
 
-    public void sendParentConsentLink(ParentConsentRequest request){
+    public void sendParentConsentLink(ParentConsentInvitationRequest request){
 
         Context context = new Context();
         context.setVariable("childFirstName",request.getChildFirstName());
         context.setVariable("childLastName",request.getChildLastName());
-        context.setVariable("agreementContent",request.getAgreementContent());
+        context.setVariable("agreementTitle",request.getAgreementTitle());
         context.setVariable("consentLink",request.getConsentLink());
 
         String htmlContent = templateEngine.process("parent-consent",context);
@@ -193,6 +193,31 @@ public class NotificationService {
                     .formatted(request.getChildFirstName(),request.getChildLastName()));
             helper.setText(htmlContent,true);
             mailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendParentConsentConfirmation(ParentConsentConfirmationRequest request) {
+
+        Context context = new Context();
+        context.setVariable("childFirstName", request.getChildFirstName());
+        context.setVariable("childLastName", request.getChildLastName());
+        context.setVariable("agreementTitle", request.getAgreementTitle());
+        context.setVariable("agreementContent", request.getAgreementContent());
+        context.setVariable("parentConsentAt", request.getParentConsentAt());
+        context.setVariable("consentId",request.getConsentId());
+
+        String htmlContent = templateEngine.process("consent-confirmation", context);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(request.getParentEmail());
+            helper.setSubject("Потвърждение на вашето съгласие за %s %s".formatted(request.getChildFirstName(), request.getChildLastName()));
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -4,7 +4,7 @@ package mail_svc.model;
 import lombok.Data;
 
 @Data
-public class ParentConsentRequest {
+public class ParentConsentInvitationRequest {
 
     private String parentEmail;
 
@@ -12,7 +12,7 @@ public class ParentConsentRequest {
 
     private String childLastName;
 
-    private String agreementContent;
+    private String agreementTitle;
 
     private String consentLink;
 

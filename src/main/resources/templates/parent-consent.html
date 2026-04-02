@@ -36,6 +36,13 @@
             text-align: left;
             line-height: 1.6;
         }
+        .agreement-box {
+            background: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 12px 0 20px;
+        }
         .btn {
             display: inline-block;
             background: #e18e09;
@@ -71,8 +78,22 @@
         <div class="header">Dragon Dojo</div>
         <div class="content">
             <h2 style="color:#2d3e50; margin-bottom: 20px;">Необходимо е родителско съгласие за участие в спортни дейностти на „Спортен карате клуб Драгон ДСД – Асеновград" на <span th:text="${childFirstName}"></span> <span th:text="${childLastName}"></span></h2>
-            <div th:utext="${agreementContent}"></div>
-            <a th:href="${consentLink}" class="btn">Потвърди съгласието</a>
+            <p>Моля, запознайте се със споразумението:</p>
+            <div class="agreement-box" th:utext="${agreementTitle}"></div>
+            <p>и потвърдете съгласието си чрез следния линк:</p>
+
+            <a th:href="${consentLink}" class="btn">Към страницата за потвърждение</a>
+
+            <p>На отворената страница ще имате възможност да прегледате условията и да изберете „Приемам“ или „Отказ“.</p>
+            <p>С натискане на бутона „Приемам“:</p>
+            <ul>
+                <li>потвърждавате, че сте се запознали с условията на споразумението</li>
+                <li>приемате същите и се задължавате да ги спазвате</li>
+                <li>декларирате, че сте родител или законен настойник на детето и предоставяте вярна информация</li>
+            </ul>
+            <p>Ако не разпознавате тази заявка, моля игнорирайте този имейл.</p>
+            <p>Поздрави,<br>Драгон Доджо</p>
+
         </div>
         <div class="footer">
             Това е автоматично генерирано съобщение. Моля не отговаряйте. За допълнителни въпроси обърнете се към администраторите или на място в залата.<br>

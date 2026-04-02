@@ -1,9 +1,6 @@
 package mail_svc.web;
 
-import mail_svc.model.ForgottenPasswordRequest;
-import mail_svc.model.Notification;
-import mail_svc.model.NotificationPreference;
-import mail_svc.model.ParentConsentRequest;
+import mail_svc.model.*;
 import mail_svc.service.NotificationService;
 import mail_svc.web.dto.NotificationPreferenceRequest;
 import mail_svc.web.dto.NotificationPreferenceResponse;
@@ -96,11 +93,18 @@ public class NotificationController {
     }
 
     @PostMapping("/consents")
-    public ResponseEntity<Void>sendParentConsentEmail(@RequestBody ParentConsentRequest request){
+    public ResponseEntity<Void>sendParentConsentEmail(@RequestBody ParentConsentInvitationRequest request){
         notificationService.sendParentConsentLink(request);
 
         return ResponseEntity.status(HttpStatus.OK).build();
 
+     }
+
+     @PostMapping("/consents/confirm")
+    public ResponseEntity<Void>sendParentConsentConfirmationEmail(@RequestBody ParentConsentConfirmationRequest request){
+        notificationService.sendParentConsentConfirmation(request);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
      }
 
 }

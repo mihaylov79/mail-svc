@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Потвърждение на родителско съгласие</title>
+    <style>
+        @font-face {
+            font-family: 'Caveat';
+            src: url('data:font/woff2;base64,YOUR_BASE64_HERE') format('woff2');
+        }
+        body {
+            font-family: "Caveat", Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+        }
+        .content {
+            font-size: 18px;
+            color: #555;
+            padding: 20px;
+            text-align: left;
+            line-height: 1.6;
+        }
+        .section-title {
+            color: #2d3e50;
+            margin: 20px 0 8px;
+            font-size: 18px;
+        }
+        .agreement-box {
+            background: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            padding: 12px;
+            white-space: normal;
+            line-height: 1.5;
+        }
+        .logo {
+            width: 600px;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+            margin: 10px auto;
+        }
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            padding: 10px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <img src="https://fujimae.com/8457-zoom_producto/training-kyokushin-kan-karate-gi.jpg" alt="Dragon Dojo Logo" class="logo">
+    <div class="header">Dragon Dojo</div>
+    <div class="content">
+        <p>
+            Вашето съгласие за участие в спортни дейности на „Спортен карате клуб Драгон Доджо ДСД - Асеновград"
+            на <span th:text="${childFirstName}">Име</span> <span th:text="${childLastName}">Фамилия</span>
+            беше успешно регистрирано.
+        </p>
+
+        <div class="section-title">Детайли:</div>
+        <p><strong>Съгласие за:</strong> <span th:text="${childFirstName}">Име</span> <span th:text="${childLastName}">Фамилия</span></p>
+        <p><strong>Споразумение:</strong> <span th:text="${agreementTitle}">Заглавие на споразумение</span></p>
+        <p><strong>Дата и час на съгласието:</strong> <span th:text="${parentConsentAt != null ? #temporals.format(parentConsentAt, 'dd.MM.yyyy HH:mm') : '-'}">01.04.2026 12:00</span></p>
+        <p><strong>Номер на съгласието:</strong> <span th:text="${consentId}">идентификация на съгласието</span> </p>
+
+        <div class="section-title">Пълният текст на споразумението за което дадохте съгласие:</div>
+        <div class="agreement-box" th:utext="${agreementContent}"></div>
+
+        <div class="section-title">Важно:</div>
+        <p>Приемането на посоченото по-горе споразумение е необходимо условие за участие в дейностите на клуба.</p>
+
+        <p>Вие можете оттеглите даденото съгласие по всяко време:</p>
+        <p>през профила на детето</p>
+        <p>чрез изпращане на имейл до dragon.dojo@gmail.com</p>
+
+        <p>Ако не разпознавате това действие, моля свържете се с нас незабавно.</p>
+
+        <p>Поздрави,<br>Драгон Доджо</p>
+    </div>
+    <div class="footer">
+        Това е автоматично генерирано съобщение. Моля не отговаряйте директно на този имейл.<br>
+        &copy; 2026 Драгон Доджо
+    </div>
+</div>
+</body>
+</html>
+
