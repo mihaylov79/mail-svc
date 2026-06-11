@@ -127,7 +127,7 @@ public class NotificationService {
                     .deleted(false)
                     .build();
 
-            log.warn("Изпращането до [%s] беше неуспешно - [s]!".formatted(recipientPreference.getInfo()),e.getMessage());
+            log.warn("Изпращането до [{}] беше неуспешно - {}!", recipientPreference.getInfo(), e.getMessage());
 
             return notificationRepository.save(notification);
 
@@ -219,6 +219,30 @@ public class NotificationService {
             mailSender.send(message);
 
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendCancelConfirmationEmail(CancellationConfirmationRequest request) {
+        Context context = new Context();
+        context.setVariable("userFirstName", request.getUserFirstName());
+        context.setVariable("userLastName", request.getUserLastName());
+        context.setVariable("agreementTitle", request.getAgreementTitle());
+        context.setVariable("cancelledAt", request.getCancelledAt());
+        context.setVariable("cancelInitiatedBy", request.getCancelInitiatedBy());
+        context.setVariable("consentId", request.getAgreementId());
+
+        String htmlContent = templateEngine.process("cancellation-confirmation", context);
+
+        try{
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(request.getRecipientEmail());
+            helper.setSubject("Потвърждение за оттеглено съгласие за %s".formatted(request.getAgreementTitle()));
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            log.error("Грешка при изпращане на имейл за потвърждение за оттеглено съгласие: {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }

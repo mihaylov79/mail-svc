@@ -107,4 +107,11 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).build();
      }
 
+     @PostMapping("/consents/cancel")
+    public ResponseEntity<Void>sendCancelConfirmationEmail(@RequestBody CancellationConfirmationRequest request){
+        notificationService.sendCancelConfirmationEmail(request);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
 }

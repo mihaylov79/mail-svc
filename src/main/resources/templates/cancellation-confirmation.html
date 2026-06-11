@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Потвърждение за оттеглено съгласие</title>
+    <style>
+        @font-face {
+            font-family: 'Caveat';
+            src: url('data:font/woff2;base64,YOUR_BASE64_HERE') format('woff2');
+        }
+        body {
+            font-family: "Caveat", Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+        }
+        .content {
+            font-size: 18px;
+            color: #555;
+            padding: 20px;
+            text-align: left;
+            line-height: 1.6;
+        }
+        .section-title {
+            color: #2d3e50;
+            margin: 20px 0 8px;
+            font-size: 18px;
+        }
+        .logo {
+            width: 600px;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+            margin: 10px auto;
+        }
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            padding: 10px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <img src="https://fujimae.com/8457-zoom_producto/training-kyokushin-kan-karate-gi.jpg" alt="Dragon Dojo Logo" class="logo">
+    <div class="header">Dragon Dojo</div>
+    <div class="content">
+        <p>
+            Здравейте, <span th:text="${userFirstName}">Име</span> <span th:text="${userLastName}">Фамилия</span>,
+        </p>
+        <p>
+            Това писмо потвърждава, че вашето съгласие за участие в спортни дейности по 
+            <strong><span th:text="${agreementTitle}">Заглавие на споразумение</span></strong> 
+            беше успешно оттеглено.
+        </p>
+
+        <div class="section-title">Детайли за прекратяването:</div>
+        <p><strong>Споразумение:</strong> <span th:text="${agreementTitle}">Заглавие</span></p>
+        <p><strong>Дата и час на прекратяване:</strong> <span th:text="${cancelledAt != null ? #temporals.format(cancelledAt, 'dd.MM.yyyy HH:mm') : '-'}">01.04.2026 12:00</span></p>
+        <p><strong>Прекратено от:</strong> <span th:text="${cancelInitiatedBy}">Инициатор</span></p>
+        <p><strong>Номер на съгласието:</strong> <span th:text="${consentId}">ID на съгласието</span></p>
+
+        <p style="margin-top: 30px;">
+            От този момент нататък участието в дейностите, свързани с това споразумение, може да бъде ограничено. 
+            Ако това действие не е извършено от вас, моля свържете се с нас незабавно на dragon.dojo@gmail.com.
+        </p>
+
+        <p>Поздрави,<br><strong>Драгон Доджо</strong></p>
+    </div>
+    <div class="footer">
+        Това е автоматично генерирано съобщение. Моля не отговаряйте директно на този имейл.<br>
+        &copy; 2026 Драгон Доджо
+    </div>
+</div>
+</body>
+</html>
