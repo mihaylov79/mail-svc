@@ -41,6 +41,15 @@
             margin: 20px 0 8px;
             font-size: 18px;
         }
+        .agreement-details {
+            margin: 20px 0 8px;
+        }
+        .agreement-details summary {
+            cursor: pointer;
+            color: #2d3e50;
+            font-size: 18px;
+            outline: none;
+        }
         .agreement-box {
             background: #fafafa;
             border: 1px solid #e5e5e5;
@@ -48,6 +57,7 @@
             padding: 12px;
             white-space: normal;
             line-height: 1.5;
+            margin-top: 8px;
         }
         .logo {
             width: 600px;
@@ -82,8 +92,10 @@
         <p><strong>Дата и час на съгласието:</strong> <span th:text="${parentConsentAt != null ? #temporals.format(parentConsentAt, 'dd.MM.yyyy HH:mm') : '-'}">01.04.2026 12:00</span></p>
         <p><strong>Номер на съгласието:</strong> <span th:text="${consentId}">идентификация на съгласието</span> </p>
 
-        <div class="section-title">Пълният текст на споразумението за което дадохте съгласие:</div>
-        <div class="agreement-box" th:utext="${agreementContent}"></div>
+        <details class="agreement-details">
+            <summary><strong>Пълният текст на споразумението за което дадохте съгласие (натиснете за преглед):</strong></summary>
+            <div class="agreement-box" th:utext="${agreementContent}"></div>
+        </details>
 
         <div class="section-title"><strong>Важно:</strong></div>
         <p>Приемането на посоченото по-горе споразумение е необходимо условие за участие в дейностите на клуба.</p>
