@@ -30,7 +30,7 @@ provider "azapi" {
 
 resource "azurerm_resource_group" "rg" {
   name     = "mail-svc-rg"
-  location = "Switzerland North"
+  location = "Poland Central"
 }
 
 # resource "azurerm_storage_account" "sa" {
