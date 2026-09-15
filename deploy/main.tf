@@ -50,10 +50,10 @@ resource "azurerm_resource_group" "rg" {
 # НЕ Е ТЕСТВАНО!!! Автоматично извличане чрез Terraform data източник (Ако и двете са в един Terraform проект).
 # IP-ta на главният апп за да се ограничи достъпа на заявки от другаде !!
 
-# data "azurerm_linux_web_app" "main_app" {
-#   name                = "<име-на-главния-app-service>"
-#   resource_group_name = "<име-на-неговата-resource-group>"
-# }
+data "azurerm_linux_web_app" "main_app" {
+  name                = "<име-на-главния-app-service>"
+  resource_group_name = "<име-на-неговата-resource-group>"
+}
 
 
 resource "azurerm_container_app_environment" "cae" {
@@ -219,14 +219,14 @@ resource "azurerm_container_app" "caapp" {
     target_port      = 8081
 
     #НЕ Е ТЕСТВАНО!!! Трябва да се добави IP Security Restriction, за да се ограничи достъпа до приложението само от главното приложение. Трябва да се добави Името на Апп-а и неговото реално IP.
-    # dynamic "ip_security_restriction" {
-    #   for_each = [for ip in split(",", data.azurerm_linux_web_app.main_app.outbound_ip_addresses) : "${ip}/32"]
-    #   content {
-    #     name             = "AllowMainApp-${ip_security_restriction.key}"
-    #     ip_address_range = ip_security_restriction.value
-    #     action           = "Allow"
-    #   }
-    # }
+    dynamic "ip_security_restriction" {
+      for_each = [for ip in split(",", data.azurerm_linux_web_app.main_app.outbound_ip_addresses) : "${ip}/32"]
+      content {
+        name             = "AllowMainApp-${ip_security_restriction.key}"
+        ip_address_range = ip_security_restriction.value
+        action           = "Allow"
+      }
+    }
 
     traffic_weight {
       latest_revision = true
