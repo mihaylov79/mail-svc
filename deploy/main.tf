@@ -51,8 +51,8 @@ resource "azurerm_resource_group" "rg" {
 # IP-ta на главният апп за да се ограничи достъпа на заявки от другаде !!
 
 data "azurerm_linux_web_app" "main_app" {
-  name                = "<име-на-главния-app-service>"
-  resource_group_name = "<име-на-неговата-resource-group>"
+  name                = "dragon-dojo"
+  resource_group_name = "dragon-dojo-rg"
 }
 
 
